@@ -1,0 +1,20 @@
+/* Palette lives here — swap these during the art pass. */
+:root {
+  --bg: #000;
+  --text: #ff01d5; /* sampled from Pink color swatch.jpg */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+  line-height: 1.6;
+}
