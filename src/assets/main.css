@@ -2,6 +2,7 @@
 :root {
   --bg: #000;
   --text: #ff01d5; /* sampled from Pink color swatch.jpg */
+  --accent: #01b2ff; /* sampled from Blue Color Swatch.jpg */
 }
 
 *,
@@ -17,4 +18,6 @@ body {
   color: var(--text);
   font-family: system-ui, sans-serif;
   line-height: 1.6;
+  /* full-width (100vw) pieces like the jazz footer include the scrollbar's width; clip the sliver */
+  overflow-x: clip;
 }

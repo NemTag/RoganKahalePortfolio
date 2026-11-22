@@ -46,7 +46,7 @@ nav {
 }
 
 nav a:hover,
-nav a.router-exact-active {
+nav a.router-link-exact-active {
   text-decoration: underline;
 }
 
