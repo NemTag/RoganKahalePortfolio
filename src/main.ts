@@ -11,7 +11,7 @@ import FakebookPage from './components/FakebookPage.vue'
 import ContactPage from './components/ContactPage.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', component: FrontPage },
     { path: '/music', component: MusicPage }, // All works (the base page)

@@ -5,7 +5,9 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
-export default defineConfig({
+// Pages serves the site from /<repo name>/; `npm run dev` stays at /
+export default defineConfig(({ command, isPreview }) => ({
+  base: command === 'build' || isPreview ? '/RoganKahalePortfolio/' : '/',
   plugins: [
     vue(),
     vueDevTools(),
@@ -15,4 +17,4 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-})
+}))

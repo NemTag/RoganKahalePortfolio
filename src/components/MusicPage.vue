@@ -13,9 +13,9 @@ withDefaults(defineProps<{ title?: string; songs?: Song[]; footer?: string }>(),
 // Subpage buttons. `sound` plays on click (files live in public/); one player per sound,
 // so a repeat click restarts it instead of stacking copies. No sound = silent.
 const links = [
-  { to: '/music/jazz', label: 'My Jazz Works', sound: new Audio('/freeform-jazz.mp3') },
-  { to: '/music/orchestral', label: 'My Orchestral Works', sound: new Audio('/orchestra-hit-hq.mp3') },
-  { to: '/music/fakebook', label: 'My Fakebook', sound: new Audio('/hawaiian-flower-3-spongebob-squarepants.mp3') },
+  { to: '/music/jazz', label: 'My Jazz Works', sound: new Audio(import.meta.env.BASE_URL + 'freeform-jazz.mp3') },
+  { to: '/music/orchestral', label: 'My Orchestral Works', sound: new Audio(import.meta.env.BASE_URL + 'orchestra-hit-hq.mp3') },
+  { to: '/music/fakebook', label: 'My Fakebook', sound: new Audio(import.meta.env.BASE_URL + 'hawaiian-flower-3-spongebob-squarepants.mp3') },
   { to: '/music', label: 'All' },
 ]
 function play(sound?: HTMLAudioElement) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Plays when "Who?" is clicked (file lives in public/). Repeat clicks restart it.
-const reveal = new Audio('/among-us-role-reveal-sound-effect.mp3')
+const reveal = new Audio(import.meta.env.BASE_URL + 'among-us-role-reveal-sound-effect.mp3')
 function playReveal() {
   reveal.currentTime = 0
   reveal.play().catch(() => {}) // never break navigation over a sound
