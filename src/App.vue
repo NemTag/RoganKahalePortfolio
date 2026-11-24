@@ -1,8 +1,17 @@
+<script setup lang="ts">
+// Plays when "Who?" is clicked (file lives in public/). Repeat clicks restart it.
+const reveal = new Audio('/among-us-role-reveal-sound-effect.mp3')
+function playReveal() {
+  reveal.currentTime = 0
+  reveal.play().catch(() => {}) // never break navigation over a sound
+}
+</script>
+
 <template>
   <header class="site-header">
     <RouterLink class="brand" to="/">Rogan Kahale Tinsley</RouterLink>
     <nav>
-      <RouterLink to="/">Who?</RouterLink>
+      <RouterLink to="/" @click="playReveal">Who?</RouterLink>
       <RouterLink to="/music">My works</RouterLink>
       <RouterLink to="/contact">Contact</RouterLink>
     </nav>

@@ -1,103 +1,47 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import placeholder from '../assets/Visual Elements/11.jpg'
-import jazzFooter from '../assets/jazz-footer.jpg' // 4.jpg rotated flat, cropped to the drawing
-import orchestralFooter from '../assets/orchestral-footer.jpg' // 10.jpg cropped to the drawing
-import fakebookFooter from '../assets/fakebook-footer.jpg' // 12.jpg rotated flat, cropped to the drawing
+// Base works page. Used as-is it's the All page; JazzPage / OrchestralPage / FakebookPage
+// wrap it with their own title, songs and footer.
+import { allSongs, type Song } from '../songs'
 import allFooter from '../assets/Visual Elements/8.jpg' // uncropped
 
-// No category = the All page (/music)
-const props = defineProps<{ category?: string }>()
+withDefaults(defineProps<{ title?: string; songs?: Song[]; footer?: string }>(), {
+  title: 'All Works',
+  songs: () => allSongs,
+  footer: allFooter,
+})
 
-// Subpage slug (used in the URL) -> page title. Add a subpage = add a line here and to the route in main.ts.
-const categories: Record<string, string> = {
-  jazz: 'My Jazz Works',
-  orchestral: 'My Orchestral Works',
-  fakebook: 'My Fakebook',
-}
-
-// Add a song = add an entry. `category` decides which subpage it lands on; All shows every song.
-const songs = [
-  {
-    title: 'Jazz Song One', category: 'jazz', image: placeholder,
-    description: 'Description goes here.',
-    pdf: 'https://example.com/jazz-one.pdf',
-  },
-  {
-    title: 'Jazz Song Two', category: 'jazz', image: placeholder,
-    description: 'Description goes here.',
-    pdf: 'https://example.com/jazz-two.pdf',
-  },
-  {
-    title: 'Orchestral Piece One', category: 'orchestral', image: placeholder,
-    description: 'Description goes here.',
-    pdf: 'https://example.com/orch-one.pdf',
-  },
-  {
-    title: 'Orchestral Piece Two', category: 'orchestral', image: placeholder,
-    description: 'Description goes here.',
-    pdf: 'https://example.com/orch-two.pdf',
-  },
-  {
-    title: 'Fakebook Tune One', category: 'fakebook', image: placeholder,
-    description: 'Description goes here.',
-    pdf: 'https://example.com/fake-one.pdf',
-  },
-  {
-    title: 'Fakebook Tune Two', category: 'fakebook', image: placeholder,
-    description: 'Description goes here.',
-    pdf: 'https://example.com/fake-two.pdf',
-  },
+// Subpage buttons. `sound` plays on click (files live in public/); one player per sound,
+// so a repeat click restarts it instead of stacking copies. No sound = silent.
+const links = [
+  { to: '/music/jazz', label: 'My Jazz Works', sound: new Audio('/freeform-jazz.mp3') },
+  { to: '/music/orchestral', label: 'My Orchestral Works', sound: new Audio('/orchestra-hit-hq.mp3') },
+  { to: '/music/fakebook', label: 'My Fakebook', sound: new Audio('/hawaiian-flower-3-spongebob-squarepants.mp3') },
+  { to: '/music', label: 'All' },
 ]
-
-// Looping footer art per subpage (`all` = the All page). Subpages not listed get no footer.
-const footers: Record<string, string> = {
-  jazz: jazzFooter,
-  orchestral: orchestralFooter,
-  fakebook: fakebookFooter,
-  all: allFooter,
-}
-
-// Sound played when a subpage button is clicked (files live in public/). Subpages not listed are silent.
-// One player per sound: a repeat click restarts it instead of stacking copies.
-const sounds: Record<string, HTMLAudioElement> = {
-  jazz: new Audio('/freeform-jazz.mp3'),
-  orchestral: new Audio('/orchestra-hit-hq.mp3'),
-  fakebook: new Audio('/hawaiian-flower-3-spongebob-squarepants.mp3'),
-}
-function playSound(slug: string) {
-  const sound = sounds[slug]
+function play(sound?: HTMLAudioElement) {
   if (!sound) return
   sound.currentTime = 0
   sound.play().catch(() => {}) // e.g. file blocked or missing; never break navigation over it
 }
-
-const footer = computed(() => footers[props.category ?? 'all'])
-const title = computed(() => (props.category ? categories[props.category] : 'All Works'))
-const shown = computed(() => (props.category ? songs.filter((s) => s.category === props.category) : songs))
 </script>
 
 <template>
   <section>
     <nav class="subnav">
-      <RouterLink
-        v-for="(name, slug) in categories"
-        :key="slug"
-        :to="`/music/${slug}`"
-        @click="playSound(slug)"
-      >{{ name }}</RouterLink>
-      <RouterLink to="/music">All</RouterLink>
+      <RouterLink v-for="link in links" :key="link.to" :to="link.to" @click="play(link.sound)">
+        {{ link.label }}
+      </RouterLink>
     </nav>
 
     <h1>{{ title }}</h1>
 
-    <article v-for="song in shown" :key="song.title" class="song">
+    <article v-for="song in songs" :key="song.title" class="song">
       <h2>{{ song.title }}</h2>
       <div class="song-body">
         <img :src="song.image" :alt="song.title" />
         <div class="song-side">
-          <p>{{ song.description }}</p>
-          <a :href="song.pdf" target="_blank" rel="noopener">Sheet music (PDF)</a>
+          <p v-if="song.description">{{ song.description }}</p>
+          <a v-if="song.pdf" :href="song.pdf" target="_blank" rel="noopener">Sheet music (PDF)</a>
         </div>
       </div>
     </article>
@@ -139,7 +83,7 @@ const shown = computed(() => (props.category ? songs.filter((s) => s.category ==
   margin-top: 2rem;
 }
 
-/* Looped like the header (image comes from `footers`). Breaks out of main's 960px
+/* Looped like the header (image comes from the `footer` prop). Breaks out of main's 960px
    column to span the full window, and cancels main's bottom padding to sit flush. */
 .page-footer {
   height: 96px;
@@ -163,6 +107,7 @@ const shown = computed(() => (props.category ? songs.filter((s) => s.category ==
 
 .song-side p {
   margin-bottom: 1rem;
+  white-space: pre-line; /* \n in a description = line break (e.g. before the duration) */
 }
 
 .song-body img {
